@@ -51,10 +51,11 @@ extension TerrariaEntity {
 class World {
 	enum LoadError: Error {
 		case invalidMagic
-		case notAPlayerFile
 		case unexpectedEndOfFile
+		case notAPlayerFile
 		case unsupportedMapVersion(Int)
 		case mapTooOld
+		case notAMapFile
 	}
 
 	static var minimumVersion: Int {
@@ -121,7 +122,155 @@ class World {
 	var tilesHigh = 0
 	var tilesWide = 0
 	
-	func loadHeader(handle: FileHandle, version: Int) -> Bool {
+	func open(from: URL) throws {
+		let handle = try FileHandle(forReadingFrom: from)
+		guard let version2 = handle.readUInt32() else {
+			throw LoadError.unexpectedEndOfFile
+		}
+		let version = Int(version2)
+		guard version <= World.highestVersion else {
+			throw LoadError.unsupportedMapVersion(version)
+		}
+		guard version >= World.minimumVersion else {
+			throw LoadError.mapTooOld
+		}
+		
+		if version >= 135 {
+			let magicData = handle.readData(ofLength: 7)
+			guard let magic = String(data: magicData, encoding: .utf8), magic == "relogic" else {
+				throw LoadError.invalidMagic
+			}
+			guard let type = handle.readUInt8() else {
+				throw LoadError.unexpectedEndOfFile
+			}
+			guard type == 2 else {
+				throw LoadError.notAMapFile
+			}
+			_=handle.readData(ofLength: 4 + 8);  // revision + favorites
+		}
+		
+		guard let numSections = handle.readUInt16() else {
+			throw LoadError.unexpectedEndOfFile
+		}
+		var sections = [Int32]()
+		for _ in 0 ..< numSections {
+			guard let section = handle.readInt32() else {
+				throw LoadError.unexpectedEndOfFile
+			}
+			sections.append(section)
+		}
+		
+		guard let numTiles = handle.readUInt16() else {
+			throw LoadError.unexpectedEndOfFile
+		}
+		var mask: UInt8 = 0x80
+		var bits: UInt8 = 0
+		var extra = [Bool]()
+		for _ in 0 ..< numTiles {
+			if mask == 0x80 {
+				guard let newBits = handle.readUInt8() else {
+					throw LoadError.unexpectedEndOfFile
+				}
+				bits = newBits
+				mask = 1
+			} else {
+				mask <<= 1
+			}
+			extra.append((bits & mask) != 0)
+		}
+		
+		handle.seek(toFileOffset: UInt64(sections[0]))  // skip any extra junk
+		guard loadHeader(handle: handle, version: version) else {
+			throw LoadError.unexpectedEndOfFile
+		}
+		
+		/*
+handle->seek(sections[1]);
+loadTiles(handle, version, extra);
+*/
+		
+		handle.seek(toFileOffset: UInt64(sections[2]))
+		guard loadChests(handle: handle, version: version) else {
+			throw LoadError.unexpectedEndOfFile
+		}
+		handle.seek(toFileOffset: UInt64(sections[3]))
+		guard loadSigns(handle: handle, version: version) else {
+			throw LoadError.unexpectedEndOfFile
+		}
+		handle.seek(toFileOffset: UInt64(sections[4]))
+		guard loadNPCs(handle: handle, version: version) else {
+			throw LoadError.unexpectedEndOfFile
+		}
+		handle.seek(toFileOffset: UInt64(sections[5]))
+		if version >= 116 {
+			if version < 122 {
+				guard loadDummies(handle: handle, version: version) else {
+					throw LoadError.unexpectedEndOfFile
+				}
+			} else {
+				guard loadEntities(handle: handle, version: version) else {
+					throw LoadError.unexpectedEndOfFile
+				}
+			}
+		}
+		if (version >= 170) {
+			handle.seek(toFileOffset: UInt64(sections[6]))
+			//loadPressurePlates(handle, version);
+		}
+		if (version >= 189) {
+			handle.seek(toFileOffset: UInt64(sections[7]))
+			//loadTownManager(handle, version);
+		}
+		
+		/*
+auto handle = QSharedPointer<Handle>(new Handle(filename));
+
+int numSections = handle->r16();
+QList<int> sections;
+for (int i = 0; i < numSections; i++)
+sections.append(handle->r32());
+int numTiles = handle->r16();
+quint8 mask = 0x80;
+quint8 bits = 0;
+QList<bool> extra;
+for (int i = 0; i < numTiles; i++) {
+if (mask == 0x80) {
+bits = handle->r8();
+mask = 1;
+} else {
+mask <<= 1;
+}
+extra.append(bits & mask);
+}
+
+handle->seek(sections[0]);  // skip any extra junk
+loadHeader(handle, version);
+handle->seek(sections[1]);
+loadTiles(handle, version, extra);
+handle->seek(sections[2]);
+loadChests(handle, version);
+handle->seek(sections[3]);
+loadSigns(handle, version);
+handle->seek(sections[4]);
+loadNPCs(handle, version);
+handle->seek(sections[5]);
+if (version >= 116) {
+if (version < 122)
+loadDummies(handle, version);
+else
+loadEntities(handle, version);
+}
+if (version >= 170) {
+handle->seek(sections[6]);
+loadPressurePlates(handle, version);
+}
+if (version >= 189) {
+handle->seek(sections[7]);
+loadTownManager(handle, version);
+}*/
+	}
+	
+	private func loadHeader(handle: FileHandle, version: Int) -> Bool {
 		
 		guard header.load(handle: handle, version: version) else {
 			return false
@@ -145,7 +294,7 @@ const QList<bool> &extra);
 void loadNPCs(QSharedPointer<Handle> handle, int version);
 */
 	
-	func loadChests(handle: FileHandle, version: Int) -> Bool {
+	private func loadChests(handle: FileHandle, version: Int) -> Bool {
 		
 		guard let numChests = handle.readUInt16(),
 			let itemsPerChest = handle.readUInt16() else {
@@ -185,7 +334,7 @@ void loadNPCs(QSharedPointer<Handle> handle, int version);
 		return true
 	}
 	
-	func loadSigns(handle: FileHandle, version: Int) -> Bool {
+	private func loadSigns(handle: FileHandle, version: Int) -> Bool {
 		guard let numSigns = handle.readUInt16() else {
 			return false
 		}
@@ -262,7 +411,7 @@ npcs.append(npc);
 		return true
 	}
 
-	func loadDummies(handle: FileHandle, version: Int) -> Bool {
+	private func loadDummies(handle: FileHandle, version: Int) -> Bool {
 		guard let numDummies = handle.readInt32() else {
 			return false
 		}
@@ -276,7 +425,7 @@ npcs.append(npc);
 		return true
 	}
 
-	func loadEntities(handle: FileHandle, version: Int) -> Bool {
+	private func loadEntities(handle: FileHandle, version: Int) -> Bool {
 		
 		guard let numEntities = handle.readInt32() else {
 			return false

@@ -37,7 +37,18 @@
 		55B1D39720AF6F0800CCAE98 /* Tile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B1D39620AF6F0800CCAE98 /* Tile.swift */; };
 		55B1D39920AF724C00CCAE98 /* FileHandleAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55B1D39820AF724C00CCAE98 /* FileHandleAdditions.swift */; };
 		55BF73E420B21BA50024D38F /* WorldHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BF73E320B21BA50024D38F /* WorldHeader.swift */; };
+		55BF73F220B231610024D38F /* TerraFirmerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BF73F120B231610024D38F /* TerraFirmerTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		55BF73F420B231610024D38F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 559DFED020AE500E00355AF1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 559DFED720AE500E00355AF1;
+			remoteInfo = TerraFirmer;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		551648C220AF5B0B00B3D419 /* lzx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lzx.c; sourceTree = "<group>"; };
@@ -78,10 +89,20 @@
 		55B1D39620AF6F0800CCAE98 /* Tile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tile.swift; sourceTree = "<group>"; };
 		55B1D39820AF724C00CCAE98 /* FileHandleAdditions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHandleAdditions.swift; sourceTree = "<group>"; };
 		55BF73E320B21BA50024D38F /* WorldHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldHeader.swift; sourceTree = "<group>"; };
+		55BF73EF20B231610024D38F /* TerraFirmerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TerraFirmerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		55BF73F120B231610024D38F /* TerraFirmerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerraFirmerTests.swift; sourceTree = "<group>"; };
+		55BF73F320B231610024D38F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		559DFED520AE500E00355AF1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		55BF73EC20B231610024D38F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -104,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				559DFEDA20AE500E00355AF1 /* TerraFirmer */,
+				55BF73F020B231610024D38F /* TerraFirmerTests */,
 				559DFED920AE500E00355AF1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -112,6 +134,7 @@
 			isa = PBXGroup;
 			children = (
 				559DFED820AE500E00355AF1 /* TerraFirmer.app */,
+				55BF73EF20B231610024D38F /* TerraFirmerTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -175,6 +198,15 @@
 			path = shaders;
 			sourceTree = "<group>";
 		};
+		55BF73F020B231610024D38F /* TerraFirmerTests */ = {
+			isa = PBXGroup;
+			children = (
+				55BF73F120B231610024D38F /* TerraFirmerTests.swift */,
+				55BF73F320B231610024D38F /* Info.plist */,
+			);
+			path = TerraFirmerTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -195,6 +227,24 @@
 			productReference = 559DFED820AE500E00355AF1 /* TerraFirmer.app */;
 			productType = "com.apple.product-type.application";
 		};
+		55BF73EE20B231610024D38F /* TerraFirmerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 55BF73F620B231610024D38F /* Build configuration list for PBXNativeTarget "TerraFirmerTests" */;
+			buildPhases = (
+				55BF73EB20B231610024D38F /* Sources */,
+				55BF73EC20B231610024D38F /* Frameworks */,
+				55BF73ED20B231610024D38F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				55BF73F520B231610024D38F /* PBXTargetDependency */,
+			);
+			name = TerraFirmerTests;
+			productName = TerraFirmerTests;
+			productReference = 55BF73EF20B231610024D38F /* TerraFirmerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -208,6 +258,10 @@
 					559DFED720AE500E00355AF1 = {
 						CreatedOnToolsVersion = 9.3.1;
 						LastSwiftMigration = 0930;
+					};
+					55BF73EE20B231610024D38F = {
+						CreatedOnToolsVersion = 9.3.1;
+						TestTargetID = 559DFED720AE500E00355AF1;
 					};
 				};
 			};
@@ -225,6 +279,7 @@
 			projectRoot = "";
 			targets = (
 				559DFED720AE500E00355AF1 /* TerraFirmer */,
+				55BF73EE20B231610024D38F /* TerraFirmerTests */,
 			);
 		};
 /* End PBXProject section */
@@ -255,6 +310,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		55BF73ED20B231610024D38F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -277,7 +339,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		55BF73EB20B231610024D38F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				55BF73F220B231610024D38F /* TerraFirmerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		55BF73F520B231610024D38F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 559DFED720AE500E00355AF1 /* TerraFirmer */;
+			targetProxy = 55BF73F420B231610024D38F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		559DFEDF20AE500E00355AF1 /* Document.xib */ = {
@@ -453,6 +531,44 @@
 			};
 			name = Release;
 		};
+		55BF73F720B231610024D38F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = TerraFirmerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.MaddTheSane.TerraFirmerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TerraFirmer.app/Contents/MacOS/TerraFirmer";
+			};
+			name = Debug;
+		};
+		55BF73F820B231610024D38F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = TerraFirmerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.MaddTheSane.TerraFirmerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TerraFirmer.app/Contents/MacOS/TerraFirmer";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -470,6 +586,15 @@
 			buildConfigurations = (
 				559DFEEC20AE500F00355AF1 /* Debug */,
 				559DFEED20AE500F00355AF1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		55BF73F620B231610024D38F /* Build configuration list for PBXNativeTarget "TerraFirmerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				55BF73F720B231610024D38F /* Debug */,
+				55BF73F820B231610024D38F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
