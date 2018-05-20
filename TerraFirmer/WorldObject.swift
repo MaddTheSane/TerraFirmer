@@ -184,6 +184,8 @@ class World {
 			throw LoadError.unexpectedEndOfFile
 		}
 		
+		handle.seek(toFileOffset: UInt64(sections[1]))
+
 		/*
 handle->seek(sections[1]);
 loadTiles(handle, version, extra);
@@ -221,53 +223,6 @@ loadTiles(handle, version, extra);
 			handle.seek(toFileOffset: UInt64(sections[7]))
 			//loadTownManager(handle, version);
 		}
-		
-		/*
-auto handle = QSharedPointer<Handle>(new Handle(filename));
-
-int numSections = handle->r16();
-QList<int> sections;
-for (int i = 0; i < numSections; i++)
-sections.append(handle->r32());
-int numTiles = handle->r16();
-quint8 mask = 0x80;
-quint8 bits = 0;
-QList<bool> extra;
-for (int i = 0; i < numTiles; i++) {
-if (mask == 0x80) {
-bits = handle->r8();
-mask = 1;
-} else {
-mask <<= 1;
-}
-extra.append(bits & mask);
-}
-
-handle->seek(sections[0]);  // skip any extra junk
-loadHeader(handle, version);
-handle->seek(sections[1]);
-loadTiles(handle, version, extra);
-handle->seek(sections[2]);
-loadChests(handle, version);
-handle->seek(sections[3]);
-loadSigns(handle, version);
-handle->seek(sections[4]);
-loadNPCs(handle, version);
-handle->seek(sections[5]);
-if (version >= 116) {
-if (version < 122)
-loadDummies(handle, version);
-else
-loadEntities(handle, version);
-}
-if (version >= 170) {
-handle->seek(sections[6]);
-loadPressurePlates(handle, version);
-}
-if (version >= 189) {
-handle->seek(sections[7]);
-loadTownManager(handle, version);
-}*/
 	}
 	
 	private func loadHeader(handle: FileHandle, version: Int) -> Bool {
@@ -322,8 +277,8 @@ void loadNPCs(QSharedPointer<Handle> handle, int version);
 						return false
 					}
 					
-					item.name = WorldInfo.shared.items[UInt16(itm)] ?? "unknown"
-					item.prefix = WorldInfo.shared.prefixes[UInt16(prfx)] ?? "unknown"
+					item.name = WorldInfo.shared.items[UInt16(itm)] ?? ""
+					item.prefix = WorldInfo.shared.prefixes[UInt16(prfx)] ?? ""
 					chest.items.append(item)
 				}
 			}
