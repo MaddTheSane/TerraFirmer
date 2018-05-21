@@ -65,7 +65,7 @@ DTColor *DTColorCreateWithHexString(NSString *hexString)
 #if TARGET_OS_IPHONE
 	return [DTColor colorWithRed:red green:green blue:blue alpha:1.0];
 #else
-	return (DTColor *)[NSColor colorWithDeviceRed:red green:green blue:blue alpha:1.0];
+	return (DTColor *)[NSColor colorWithSRGBRed:red green:green blue:blue alpha:1.0];
 #endif
 }
 
@@ -95,7 +95,7 @@ DTColor *DTColorCreateWithHTMLName(NSString *name)
 #if TARGET_OS_IPHONE
 		return [DTColor colorWithRed:red green:green blue:blue alpha:alpha];
 #else
-		return (DTColor *)[NSColor colorWithDeviceRed:red green:green blue:blue alpha:alpha];
+		return (DTColor *)[NSColor colorWithSRGBRed:red green:green blue:blue alpha:alpha];
 #endif
 	}
 	
@@ -118,7 +118,7 @@ DTColor *DTColorCreateWithHTMLName(NSString *name)
 #if TARGET_OS_IPHONE
 		return [DTColor colorWithRed:red green:green blue:blue alpha:alpha];
 #else
-		return (DTColor *)[NSColor colorWithDeviceRed:red green:green blue:blue alpha:alpha];
+		return (DTColor *)[NSColor colorWithSRGBRed:red green:green blue:blue alpha:alpha];
 #endif
 	}
 	

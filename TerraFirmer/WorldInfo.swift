@@ -30,6 +30,15 @@ private struct IDName: Decodable {
 	}
 }
 
+private struct GlobalStruct: Decodable {
+	enum CodingKeys: String, CodingKey {
+		case color
+		case identifier = "id"
+	}
+	var identifier: String
+	var color: String
+}
+
 private func loadDictionary(from: URL, using decode: JSONDecoder) throws -> [UInt16: String] {
 	let data = try Data(contentsOf: from)
 	var toRet = [UInt16: String]()
@@ -96,6 +105,85 @@ struct WorldInfo {
 		jsonURL = Bundle.main.url(forResource: "npcs", withExtension: "json")!
 		data = try! Data(contentsOf: jsonURL)
 		npcs = try! decoder.decode([NPC].self, from: data)
+		
+		do {
+			var npcsByID = [Int16: NPC]()
+			var npcBanner = [Int32: NPC]()
+			var npcName = [String: NPC]()
+			for npc in npcs {
+				npcsByID[npc.identifier] = npc
+				if let banner = npc.banner {
+					npcBanner[banner] = npc
+				} else {
+					npcName[npc.title] = npc
+				}
+			}
+			
+			npcsByIdentifier = npcsByID
+			npcsByBanner = npcBanner
+			npcsByName = npcName
+		}
+		
+		jsonURL = Bundle.main.url(forResource: "globals", withExtension: "json")!
+		data = try! Data(contentsOf: jsonURL)
+		
+		var bDict = [String: String]()
+		
+		do {
+			let globals = try! decoder.decode([GlobalStruct].self, from: data)
+			for aDict in globals {
+				bDict[aDict.identifier] = aDict.color
+			}
+		}
+		
+		if let skyVal = bDict["sky"],
+			let skyCol = DTColorCreateWithHTMLName(skyVal) {
+			sky = skyCol
+		} else {
+			sky = .clear
+		}
+		
+		if let skyVal = bDict["earth"],
+			let skyCol = DTColorCreateWithHTMLName(skyVal) {
+			earth = skyCol
+		} else {
+			earth = .clear
+		}
+		
+		if let skyVal = bDict["rock"],
+			let skyCol = DTColorCreateWithHTMLName(skyVal) {
+			rock = skyCol
+		} else {
+			rock = .clear
+		}
+
+		if let skyVal = bDict["hell"],
+			let skyCol = DTColorCreateWithHTMLName(skyVal) {
+			hell = skyCol
+		} else {
+			hell = .clear
+		}
+
+		if let skyVal = bDict["water"],
+			let skyCol = DTColorCreateWithHTMLName(skyVal) {
+			water = skyCol
+		} else {
+			water = .clear
+		}
+
+		if let skyVal = bDict["lava"],
+			let skyCol = DTColorCreateWithHTMLName(skyVal) {
+			lava = skyCol
+		} else {
+			lava = .clear
+		}
+
+		if let skyVal = bDict["honey"],
+			let skyCol = DTColorCreateWithHTMLName(skyVal) {
+			honey = skyCol
+		} else {
+			honey = .clear
+		}
 	}
 	
 	struct WallInfo: Decodable {
@@ -128,7 +216,7 @@ struct WorldInfo {
 	}
 	
 	class TileInfo: Decodable {
-		struct TileFlag: OptionSet, Decodable {
+		struct TileFlag: OptionSet, Codable {
 			var rawValue: UInt32
 			
 			static var solid: TileFlag {
@@ -392,7 +480,7 @@ struct WorldInfo {
 		}
 	}
 	
-	struct NPC: Codable {
+	final class NPC: Codable {
 		enum CodingKeys: String, CodingKey {
 			case title = "name"
 			case head
@@ -400,12 +488,12 @@ struct WorldInfo {
 			case banner
 		}
 		
-		var title: String = ""
-		var head: UInt16?
-		var identifier: Int16
-		var banner: Int32?
+		let title: String
+		let head: UInt16?
+		let identifier: Int16
+		let banner: Int32?
 		
-		init(from decoder: Decoder) throws {
+		required init(from decoder: Decoder) throws {
 			let values = try decoder.container(keyedBy: CodingKeys.self)
 			title = try values.decodeIfPresent(String.self, forKey: .title) ?? ""
 			head = try values.decodeIfPresent(UInt16.self, forKey: .head)
@@ -419,4 +507,15 @@ struct WorldInfo {
 	let walls: [WallInfo]
 	let tiles: [TileInfo]
 	let npcs: [NPC]
+	let npcsByIdentifier: [Int16: NPC]
+	let npcsByBanner: [Int32: NPC]
+	let npcsByName: [String: NPC]
+	
+	let sky: NSColor
+	let earth: NSColor
+	let rock: NSColor
+	let hell: NSColor
+	let water: NSColor
+	let lava: NSColor
+	let honey: NSColor
 }
