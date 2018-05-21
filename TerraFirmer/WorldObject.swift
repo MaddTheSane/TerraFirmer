@@ -334,33 +334,42 @@ class World {
 void World::loadNPCs(QSharedPointer<Handle> handle, int version) {
 npcs.clear();
 emit status("Loading NPCs...");
-while (handle->r8()) {
-NPC npc;
-npc.head = 0;
-npc.sprite = 0;
-if (version >=190) {
-npc.sprite = handle->r32();
-if (info.npcsById.contains(npc.sprite)) {
-auto theNPC = info.npcsById[npc.sprite];
-npc.head = theNPC->head;
-npc.title = theNPC->title;
-}
-} else {
-npc.title = handle->rs();
-if (info.npcsByName.contains(npc.title)) {
-auto theNPC = info.npcsByName[npc.title];
-npc.head = theNPC->head;
-npc.sprite = theNPC->id;
-}
-}
-npc.name = handle->rs();
-npc.x = handle->rf();
-npc.y = handle->rf();
-npc.homeless = handle->r8();
-npc.homeX = handle->r32();
-npc.homeY = handle->r32();
-npcs.append(npc);
-}
+		*/
+		while handle.readUInt8()! != 0 {
+			var npc = NPC()
+			npc.head = 0;
+			npc.sprite = 0;
+			if version >= 190 {
+				guard let sprite = handle.readInt32() else {
+					return false
+				}
+				npc.sprite = Int16(sprite);
+				if var theNPC = WorldInfo.shared.npcsByIdentifier[npc.sprite] {
+					npc.head = Int16(bitPattern: theNPC.head ?? 0)
+					npc.title = theNPC.title;
+				}
+			} else {
+				guard let title = handle.readString() else {
+					return false
+				}
+				npc.title = title
+				if let theNPC = WorldInfo.shared.npcsByName[npc.title] {
+					npc.head = Int16(bitPattern: theNPC.head ?? 0)
+					npc.sprite = theNPC.identifier;
+				}
+			}
+			guard let nName = handle.readString(), let nx = handle.readFloat(), let ny = handle.readFloat(), let homelessByte = handle.readUInt8(), let hx = handle.readInt32(), let hy = handle.readInt32() else {
+				return false
+			}
+			npc.name = nName
+			npc.location = TerrariaPoint(x: Int32(nx), y: Int32(ny))
+			npc.isHomeless = homelessByte != 0
+			npc.homeLocation = TerrariaPoint(x: hx, y: hy)
+			npcs.append(npc);
+		}
+		
+		
+		/*
 if (version >= 140) {
 while (handle->r8()) {
 NPC npc;
@@ -383,9 +392,7 @@ npc.y = handle->rf();
 npc.homeless = true;
 npcs.append(npc);
 }
-}
-}
-*/
+}*/
 		return true
 	}
 
