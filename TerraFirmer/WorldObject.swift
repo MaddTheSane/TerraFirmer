@@ -72,7 +72,7 @@ class World {
 			var prefix: String = ""
 		};
 		var location: TerrariaPoint = TerrariaPoint()
-		var name: String? = nil
+		var name: String = ""
 		var items: [Item] = []
 	};
 	
@@ -185,11 +185,9 @@ class World {
 		}
 		
 		handle.seek(toFileOffset: UInt64(sections[1]))
-
-		/*
-handle->seek(sections[1]);
-loadTiles(handle, version, extra);
-*/
+		guard loadTiles(handle: handle, version: version, extra: extra) else {
+			throw LoadError.unexpectedEndOfFile
+		}
 		
 		handle.seek(toFileOffset: UInt64(sections[2]))
 		guard loadChests(handle: handle, version: version) else {
@@ -243,11 +241,36 @@ loadTiles(handle, version, extra);
 		return true
 	}
 	
-	/*
-void loadTiles(QSharedPointer<Handle> handle, int version,
-const QList<bool> &extra);
-void loadNPCs(QSharedPointer<Handle> handle, int version);
-*/
+	private func loadTiles(handle: FileHandle, version: Int, extra: [Bool]) -> Bool {
+		for x in 0 ..< tilesWide {
+			var offset = x
+			var y = 0
+			repeat {
+				var rle = 0
+				defer {
+					y += 1
+				}
+				guard let newTile = Tile(fileHandle: handle, extra: extra, rle: &rle) else {
+					return false
+				}
+				tiles[offset] = newTile
+				
+				var destOffset = offset + tilesWide
+				if rle > 0 {
+					for r in 0 ..< rle {
+						defer {
+							destOffset += tilesWide
+						}
+						tiles[destOffset] = tiles[offset]
+					}
+				}
+				y += rle
+				offset = destOffset
+			} while y < tilesHigh
+		}
+		
+		return true
+	}
 	
 	private func loadChests(handle: FileHandle, version: Int) -> Bool {
 		
