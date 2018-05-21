@@ -107,7 +107,7 @@ extension Tile {
 		let active = (flags1 & 2) != 0;
 		flags = active ? .active : [];
 		if (active) {
-			guard let tempType1: Int8 = handle.readInt8() else {
+			guard let tempType1 = handle.readUInt8() else {
 				return nil
 			}
 			type = Int16(tempType1)
