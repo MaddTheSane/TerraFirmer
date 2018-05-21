@@ -215,12 +215,22 @@ class World {
 		}
 		if (version >= 170) {
 			handle.seek(toFileOffset: UInt64(sections[6]))
-			//loadPressurePlates(handle, version);
+			guard loadPressurePlates(handle: handle, version: version) else {
+				throw LoadError.unexpectedEndOfFile
+			}
 		}
 		if (version >= 189) {
 			handle.seek(toFileOffset: UInt64(sections[7]))
-			//loadTownManager(handle, version);
+			guard loadTownManager(handle: handle, version: version) else {
+				throw LoadError.unexpectedEndOfFile
+			}
 		}
+		
+		//if (!player.isEmpty()) {
+		//	loadPlayer();
+		//}
+
+		spreadLight()
 	}
 	
 	private func loadHeader(handle: FileHandle, version: Int) -> Bool {
@@ -330,11 +340,7 @@ class World {
 	}
 	
 	func loadNPCs(handle: FileHandle, version: Int) -> Bool {
-	/*
-void World::loadNPCs(QSharedPointer<Handle> handle, int version) {
-npcs.clear();
-emit status("Loading NPCs...");
-		*/
+		
 		while handle.readUInt8()! != 0 {
 			var npc = NPC()
 			npc.head = 0;
@@ -344,7 +350,7 @@ emit status("Loading NPCs...");
 					return false
 				}
 				npc.sprite = Int16(sprite);
-				if var theNPC = WorldInfo.shared.npcsByIdentifier[npc.sprite] {
+				if let theNPC = WorldInfo.shared.npcsByIdentifier[npc.sprite] {
 					npc.head = Int16(bitPattern: theNPC.head ?? 0)
 					npc.title = theNPC.title;
 				}
@@ -368,31 +374,36 @@ emit status("Loading NPCs...");
 			npcs.append(npc);
 		}
 		
-		
-		/*
-if (version >= 140) {
-while (handle->r8()) {
-NPC npc;
-if (version >=190) {
-npc.sprite = handle->r32();
-if (info.npcsById.contains(npc.sprite)) {
-auto theNPC = info.npcsById[npc.sprite];
-npc.title = theNPC->title;
-}
-} else {
-npc.title = handle->rs();
-if (info.npcsByName.contains(npc.title)) {
-auto theNPC = info.npcsByName[npc.title];
-npc.sprite = theNPC->id;
-}
-}
-npc.name = "!!";
-npc.x = handle->rf();
-npc.y = handle->rf();
-npc.homeless = true;
-npcs.append(npc);
-}
-}*/
+		if version >= 140 {
+			while handle.readUInt8()! != 0 {
+				var npc = NPC();
+				if version >= 190 {
+					guard let npcSprite = handle.readInt32() else {
+						return false
+					}
+					npc.sprite = Int16(npcSprite);
+					if let theNPC = WorldInfo.shared.npcsByIdentifier[npc.sprite] {
+						npc.title = theNPC.title;
+					}
+				} else {
+					guard let npcTitle = handle.readString() else {
+						return false
+					}
+					npc.title = npcTitle
+					if let theNPC = WorldInfo.shared.npcsByName[npc.title] {
+						npc.sprite = theNPC.identifier;
+					}
+				}
+				npc.name = "!!";
+				guard let npcx = handle.readFloat(), let npcy = handle.readFloat() else {
+					return false
+				}
+				npc.location = TerrariaPoint(x: Int32(npcx), y: Int32(npcy))
+				npc.isHomeless = true;
+				npcs.append(npc);
+			}
+		}
+
 		return true
 	}
 
@@ -467,6 +478,98 @@ npcs.append(npc);
 		return true
 	}
 	
+	private func loadPressurePlates(handle: FileHandle, version: Int) -> Bool {
+		guard let numPlates = handle.readInt32() else {
+			return false
+		}
+		
+		for _ in 0 ..< numPlates {
+			_=handle.readUInt32() //x
+			_=handle.readUInt32() //y
+		}
+		
+		return true
+	}
+	
+	func loadTownManager(handle: FileHandle, version: Int) -> Bool {
+		guard let numRooms = handle.readInt32() else {
+			return false
+		}
+		
+		for _ in 0 ..< numRooms {
+			_=handle.readUInt32()  //NPC
+			_=handle.readUInt32()  //X
+			_=handle.readUInt32()  //Y
+			// I wonder if they will eventually depreciate the 'home' location in the NPC data. This data is for the new feature where NPC's remember which room they were in before they died
+		}
+		
+		return true
+	}
+	
+	private func spreadLight() {
+		/*
+		// step 1, set light sources
+		int offset = 0;
+		for (int y = 0; y < tilesHigh; y++) {
+		emit status(tr("Lighting tiles : %1%").arg(
+		static_cast<int>(y * 50.0f / tilesHigh)), 0);
+		for (int x = 0; x < tilesWide; x++, offset++) {
+		auto tile = &tiles[offset];
+		auto inf = info[tile];
+		if ((!tile->active() || inf->transparent) &&
+		(tile->wall == 0 || tile->wall == 21) &&
+		tile->liquid < 255 && y < header["groundLevel"]->toInt())
+		// sunlit
+		tile->setLight(1.0, 1.0, 1.0);
+		else
+		tile->setLight(0.0, 0.0, 0.0);
+		if (tile->liquid > 0 && tile->lava())
+		tile->addLight(0.66, 0.39, 0.13);
+		tile->addLight(inf->lightR, inf->lightG, inf->lightB);
+		
+		double delta = 0.04;
+		if (tile->active() && !inf->transparent)
+		delta = 0.16;
+		if (y > 0) {
+		auto prev = &tiles[offset - tilesWide];
+		tile->addLight(prev->lightR() - delta,
+		prev->lightG() - delta,
+		prev->lightB() - delta);
+		}
+		if (x > 0) {
+		auto prev = &tiles[offset - 1];
+		tile->addLight(prev->lightR() - delta,
+		prev->lightG() - delta,
+		prev->lightB() - delta);
+		}
+		}
+		}
+		// step 2, spread light backwards
+		offset = tilesHigh * tilesWide - 1;
+		for (int y = tilesHigh - 1; y >= 0; y--) {
+		emit status(tr("Spreading light: %1%").arg(
+		static_cast<int>((tilesHigh - y) * 50.0f / tilesHigh + 50)), 0);
+		for (int x = tilesWide - 1; x >= 0; x--, offset--) {
+		auto tile = &tiles[offset];
+		auto inf = info[tile];
+		double delta = 0.04;
+		if (tile->active() && !inf->transparent)
+		delta = 0.16;
+		if (y < tilesHigh - 1) {
+		auto prev = &tiles[offset + tilesWide];
+		tile->addLight(prev->lightR() - delta,
+		prev->lightG() - delta,
+		prev->lightB() - delta);
+		}
+		if (x < tilesWide - 1) {
+		auto prev = &tiles[offset + 1];
+		tile->addLight(prev->lightR() - delta,
+		prev->lightG() - delta,
+		prev->lightB() - delta);
+		}
+		}
+		}*/
+	}
 	
 	/*
 void World::loadPlayer() {
