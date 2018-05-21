@@ -252,6 +252,7 @@ class World {
 	}
 	
 	private func loadTiles(handle: FileHandle, version: Int, extra: [Bool]) -> Bool {
+		// TODO: Speed this up, but how?
 		for x in 0 ..< tilesWide {
 			var offset = x
 			var y = 0

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		551648C420AF5B0B00B3D419 /* lzx.c in Sources */ = {isa = PBXBuildFile; fileRef = 551648C220AF5B0B00B3D419 /* lzx.c */; };
 		551648C720AF5BAC00B3D419 /* LZXWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551648C620AF5BAC00B3D419 /* LZXWrapper.swift */; };
+		558051F520B36C730042446C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 558051F720B36C730042446C /* InfoPlist.strings */; };
 		559DFEDC20AE500E00355AF1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559DFEDB20AE500E00355AF1 /* AppDelegate.swift */; };
 		559DFEDE20AE500E00355AF1 /* Document.swift in Sources */ = {isa = PBXBuildFile; fileRef = 559DFEDD20AE500E00355AF1 /* Document.swift */; };
 		559DFEE120AE500E00355AF1 /* Document.xib in Resources */ = {isa = PBXBuildFile; fileRef = 559DFEDF20AE500E00355AF1 /* Document.xib */; };
@@ -54,6 +55,7 @@
 		551648C220AF5B0B00B3D419 /* lzx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lzx.c; sourceTree = "<group>"; };
 		551648C320AF5B0B00B3D419 /* lzx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lzx.h; sourceTree = "<group>"; };
 		551648C620AF5BAC00B3D419 /* LZXWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LZXWrapper.swift; sourceTree = "<group>"; };
+		558051F620B36C730042446C /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		559DFED820AE500E00355AF1 /* TerraFirmer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TerraFirmer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		559DFEDB20AE500E00355AF1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		559DFEDD20AE500E00355AF1 /* Document.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Document.swift; sourceTree = "<group>"; };
@@ -164,6 +166,7 @@
 				559DFF0A20AE508200355AF1 /* DTColorFunctions.m */,
 				559DFEEE20AE508100355AF1 /* DTCompatibility.h */,
 				551648C520AF5B1300B3D419 /* lzx */,
+				558051F720B36C730042446C /* InfoPlist.strings */,
 			);
 			path = TerraFirmer;
 			sourceTree = "<group>";
@@ -304,6 +307,7 @@
 				559DFF1A20AE508200355AF1 /* tiles_fs.glsl in Resources */,
 				559DFF2320AE550B00355AF1 /* items.json in Resources */,
 				559DFF1020AE508200355AF1 /* globals.json in Resources */,
+				558051F520B36C730042446C /* InfoPlist.strings in Resources */,
 				559DFF1820AE508200355AF1 /* flat_fs.glsl in Resources */,
 				559DFF1920AE508200355AF1 /* fog_fs.glsl in Resources */,
 				559DFF1220AE508200355AF1 /* npcs.json in Resources */,
@@ -363,6 +367,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		558051F720B36C730042446C /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				558051F620B36C730042446C /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 		559DFEDF20AE500E00355AF1 /* Document.xib */ = {
 			isa = PBXVariantGroup;
 			children = (

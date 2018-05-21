@@ -124,6 +124,7 @@ struct WorldInfo {
 			npcsByName = npcName
 		}
 		
+		// Convoluted mess begin
 		jsonURL = Bundle.main.url(forResource: "globals", withExtension: "json")!
 		data = try! Data(contentsOf: jsonURL)
 		
@@ -184,6 +185,7 @@ struct WorldInfo {
 		} else {
 			honey = .clear
 		}
+		// Convoluted mess end
 	}
 	
 	struct WallInfo: Decodable {

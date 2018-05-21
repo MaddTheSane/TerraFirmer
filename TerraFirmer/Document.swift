@@ -46,5 +46,9 @@ class Document: NSDocument {
 	override var isEntireFileLoaded: Bool {
 		return allLoaded
 	}
+	
+	@IBAction func showKills(_ sender: Any?) {
+		
+	}
 }
 
