@@ -115,8 +115,8 @@
 		551648C520AF5B1300B3D419 /* lzx */ = {
 			isa = PBXGroup;
 			children = (
-				551648C220AF5B0B00B3D419 /* lzx.c */,
 				551648C320AF5B0B00B3D419 /* lzx.h */,
+				551648C220AF5B0B00B3D419 /* lzx.c */,
 			);
 			path = lzx;
 			sourceTree = "<group>";

@@ -10,6 +10,6 @@
 #define cInclude_h
 
 #include <stdio.h>
-#include <CommonCrypto/CommonCrypto.h>
+#include <CommonCrypto/CommonCryptor.h>
 
 #endif /* cInclude_h */
