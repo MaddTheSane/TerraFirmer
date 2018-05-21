@@ -46,14 +46,14 @@
 		#define DTCORETEXT_USES_NSURLSESSION 1
 	#endif
 
-	// constant for checking for iOS 6
+	/// constant for checking for iOS 6
 	#define DTNSFoundationVersionNumber_iOS_6_0  992.00
 
-	// constant for checking for iOS 7
+	/// constant for checking for iOS 7
 	#define DTNSFoundationVersionNumber_iOS_7_0  1047.00
 
 
-	// runtime-check if NS-style attributes are allowed
+	/// runtime-check if NS-style attributes are allowed
 	static inline BOOL DTCoreTextModernAttributesPossible()
 	{
 #if DTCORETEXT_SUPPORT_NS_ATTRIBUTES
@@ -65,7 +65,7 @@
 		return NO;
 	}
 
-	// runtime-check if CoreText draws underlines
+	/// runtime-check if CoreText draws underlines
 	static inline BOOL DTCoreTextDrawsUnderlinesWithGlyphs()
 	{
 		if (floor(NSFoundationVersionNumber) >= DTNSFoundationVersionNumber_iOS_7_0)
@@ -132,13 +132,13 @@
 		return NSStringFromPoint(NSPointFromCGPoint(point));
 	}
 
-	// runtime-check if NS-style attributes are allowed
+	/// runtime-check if NS-style attributes are allowed
 	static inline BOOL DTCoreTextModernAttributesPossible()
 	{
 		return YES;
 	}
 
-	// runtime-check if CoreText draws underlines
+	/// runtime-check if CoreText draws underlines
 	static inline BOOL DTCoreTextDrawsUnderlinesWithGlyphs()
 	{
 		return NO;
