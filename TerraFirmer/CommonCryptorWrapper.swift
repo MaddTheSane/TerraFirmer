@@ -272,13 +272,3 @@ class CommonCryptorWrapper {
 	}
 
 }
-
-/*
-func decodeAES128(key: Data) {
-	key.withUnsafeBytes { (keyBytes: UnsafePointer<UInt8>) -> Data? in
-		CCCrypt(CCOperation(kCCDecrypt), CCAlgorithm(kCCAlgorithmAES128), 0, UnsafeRawPointer(keyBytes), key.count, <#T##iv: UnsafeRawPointer!##UnsafeRawPointer!#>, <#T##dataIn: UnsafeRawPointer!##UnsafeRawPointer!#>, <#T##dataInLength: Int##Int#>, <#T##dataOut: UnsafeMutableRawPointer!##UnsafeMutableRawPointer!#>, <#T##dataOutAvailable: Int##Int#>, <#T##dataOutMoved: UnsafeMutablePointer<Int>!##UnsafeMutablePointer<Int>!#>)
-		
-		return nil
-	}
-}
-*/

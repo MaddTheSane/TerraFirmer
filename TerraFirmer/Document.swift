@@ -11,6 +11,7 @@ import Cocoa
 class Document: NSDocument {
 	var world = World()
 	private var allLoaded = false
+	@IBOutlet weak var mapView: MapView!
 
 	override init() {
 	    super.init()

@@ -113,14 +113,14 @@ class World {
 		var isOn: Bool = false
 	};
 	
-	var header = WorldHeader()
-	var tiles = [Tile]()
-	var chests = [Chest]()
-	var signs = [Sign]()
-	var npcs = [NPC]()
-	var entities = [TerrariaEntity]()
-	var tilesHigh = 0
-	var tilesWide = 0
+	let header = WorldHeader()
+	private(set) var tiles = [Tile]()
+	private(set) var chests = [Chest]()
+	private(set) var signs = [Sign]()
+	private(set) var npcs = [NPC]()
+	private(set) var entities = [TerrariaEntity]()
+	private(set) var tilesHigh = 0
+	private(set) var tilesWide = 0
 	
 	func open(from: URL) throws {
 		let handle = try FileHandle(forReadingFrom: from)
@@ -340,7 +340,7 @@ class World {
 		return true
 	}
 	
-	func loadNPCs(handle: FileHandle, version: Int) -> Bool {
+	private func loadNPCs(handle: FileHandle, version: Int) -> Bool {
 		
 		while handle.readUInt8()! != 0 {
 			var npc = NPC()
@@ -492,7 +492,7 @@ class World {
 		return true
 	}
 	
-	func loadTownManager(handle: FileHandle, version: Int) -> Bool {
+	private func loadTownManager(handle: FileHandle, version: Int) -> Bool {
 		guard let numRooms = handle.readInt32() else {
 			return false
 		}
