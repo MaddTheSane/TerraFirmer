@@ -48,7 +48,12 @@ extension TerrariaEntity {
 	}
 }
 
-class World {
+protocol WorldLoadDelegate: class {
+	func willReadHeader(_ :World)
+	func didReadHeader(_ :World)
+}
+
+final class World {
 	enum LoadError: Error {
 		case invalidMagic
 		case unexpectedEndOfFile
@@ -58,6 +63,8 @@ class World {
 		case notAMapFile
 	}
 
+	weak var loadDelegate: WorldLoadDelegate?
+	
 	static var minimumVersion: Int {
 		return 88
 	}
@@ -148,6 +155,7 @@ class World {
 			}
 			_=handle.readData(ofLength: 4 + 8);  // revision + favorites
 		}
+		
 		
 		guard let numSections = handle.readUInt16() else {
 			throw LoadError.unexpectedEndOfFile
