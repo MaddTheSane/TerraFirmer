@@ -9,31 +9,41 @@
 import Foundation
 
 class SteamConfig {
-	init() {
+	fileprivate struct Element {
+		var children: [String: Element]
+		var name: String
+		var value: String
 		
+		func find(path: String) -> String? {
+			guard let ofs = path.index(of: "/") else {
+				return children[path]?.value
+			}
+			let ofs1 = path.index(after: ofs)
+			
+			return children[String(path[path.startIndex ..< ofs])]?.find(path:String(path[ofs1..<path.endIndex]))
+		}
+	}
+	
+	private var root: Element?
+	
+	init() throws {
+		//root = Element(children: [:], name: "", value: "")
+	}
+	
+	//    public subscript(index: Data.Index) -> UInt8
+	subscript(index: String) -> String? {
+		guard let root = root else {
+			return nil
+		}
+		return root.find(path: index)
+	}
+	
+	private func parse(fileAt: URL) throws {
+		let wholeString = try String(contentsOf: fileAt)
+		var lines = wholeString.components(separatedBy: CharacterSet.newlines)
+		root = Element(lines: &lines)
 	}
 }
-
-/*
-class SteamConfig {
-class Element {
-public:
-QHash<QString, Element> children;
-QString name, value;
-Element();
-explicit Element(QList<QString> *lines);
-QString find(QString path);
-};
-
-public:
-SteamConfig();
-QString operator[](QString path) const;
-
-private:
-void parse(QString filename);
-Element *root;
-};
-*/
 
 /*
 SteamConfig::SteamConfig() {
@@ -51,68 +61,49 @@ QFile file(path);
 if (file.exists())
 parse(path);
 }
-
-QString SteamConfig::operator[](QString path) const {
-if (root == NULL)
-return QString();
-return root->find(path);
-}
-
-void SteamConfig::parse(QString filename) {
-QFile file(filename);
-
-if (file.open(QIODevice::ReadOnly)) {
-QList<QString> strings;
-QTextStream in(&file);
-while (!in.atEnd())
-strings.append(in.readLine());
-file.close();
-root = new Element(&strings);
-}
-}
-
-SteamConfig::Element::Element() {}
-
-SteamConfig::Element::Element(QList<QString> *lines) {
-QString line;
-QRegularExpression re("\"([^\"]*)\"");
-QRegularExpressionMatchIterator i;
-while (lines->length() > 0) {
-line = lines->front();
-lines->pop_front();
-i = re.globalMatch(line);
-if (i.hasNext())
-break;
-}
-if (!lines->length())  // corrupt
-return;
-QRegularExpressionMatch match = i.next();
-name = match.captured(1).toLower();
-if (i.hasNext()) {  // value is a string
-match = i.next();
-value = match.captured(1);
-value.replace("\\\\", "\\");
-}
-line = lines->front();
-if (line.contains("{")) {
-lines->pop_front();
-while (true) {
-line = lines->front();
-if (line.contains("}")) {  // empty
-lines->pop_front();
-return;
-}
-Element e(lines);
-children[e.name] = e;
-}
-}
-}
-
-QString SteamConfig::Element::find(QString path) {
-int ofs = path.indexOf("/");
-if (ofs == -1)
-return children[path].value;
-return children[path.left(ofs)].find(path.mid(ofs + 1));
-}
-
 */
+
+extension SteamConfig.Element {
+	fileprivate init?(lines: inout [String]) {
+		children = [:]
+		value = ""
+		name = ""
+		var line = ""
+		let re = try! NSRegularExpression(pattern: "\"([^\"]*)\"", options: [.useUnicodeWordBoundaries])
+		var i = [NSTextCheckingResult]()
+		while lines.count > 0 {
+			line = lines.removeFirst()
+			let range = NSRange(line.startIndex ..< line.endIndex, in: line)
+			i = re.matches(in: line, range: range)
+			if i.count > 0 {
+				break
+			}
+		}
+		guard lines.count != 0, i.count > 0 else {
+			// corrupt
+			return nil
+		}
+		let match = i[0]
+		var aRange = match.range(at: 1)
+		name = line[Range(aRange, in: line)!].lowercased()
+		if i.count > 2 {
+			aRange = i[1].range(at: 1)
+			let stringRange = Range(aRange, in: line)!
+			value = line[stringRange].replacingOccurrences(of: "\\\\", with: "\\")
+		}
+		line = lines[0]
+		if line.contains("{") {
+			lines.removeFirst()
+			while true {
+				line = lines[0]
+				if line.contains("}") { // empty
+					lines.removeFirst()
+					return
+				}
+				if let e = SteamConfig.Element(lines: &lines) {
+					children[e.name] = e
+				}
+			}
+		}
+	}
+}
