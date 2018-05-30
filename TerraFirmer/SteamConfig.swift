@@ -27,7 +27,14 @@ class SteamConfig {
 	private var root: Element?
 	
 	init() throws {
-		//root = Element(children: [:], name: "", value: "")
+		var urlPath = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+		urlPath.appendPathComponent("Steam")
+		urlPath.appendPathComponent("config")
+		urlPath.appendPathComponent("config.vdf")
+		guard try urlPath.checkResourceIsReachable() else {
+			throw NSError(domain: NSCocoaErrorDomain, code: NSFileNoSuchFileError, userInfo: [NSURLErrorKey: urlPath])
+		}
+		try parse(fileAt: urlPath)
 	}
 	
 	//    public subscript(index: Data.Index) -> UInt8
@@ -41,27 +48,12 @@ class SteamConfig {
 	private func parse(fileAt: URL) throws {
 		let wholeString = try String(contentsOf: fileAt)
 		var lines = wholeString.components(separatedBy: CharacterSet.newlines)
-		root = Element(lines: &lines)
+		guard let aRoot = Element(lines: &lines) else {
+			throw NSError(domain: NSCocoaErrorDomain, code: NSFileReadCorruptFileError)
+		}
+		root = aRoot
 	}
 }
-
-/*
-SteamConfig::SteamConfig() {
-root = NULL;
-QSettings settings("HKEY_CURRENT_USER\\Software\\Valve\\Steam",
-QSettings::NativeFormat);
-QString path = settings.value("SteamPath").toString();
-if (path.isEmpty()) {
-path =  QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation)
-.first();
-path += QDir::toNativeSeparators("/Steam");
-}
-path += QDir::toNativeSeparators("/config/config.vdf");
-QFile file(path);
-if (file.exists())
-parse(path);
-}
-*/
 
 extension SteamConfig.Element {
 	fileprivate init?(lines: inout [String]) {
