@@ -107,9 +107,7 @@ extension FileHandle {
 			len |= Int(u7 & 0x7f) << shift;
 			shift += 7;
 		} while (u7 & 0x80) != 0
-		// Rewind by one?
-		//seek(toFileOffset: offsetInFile - 1)
-		
+
 		let data = readData(ofLength: len)
 		return String(data: data, encoding: .utf8)
 	}

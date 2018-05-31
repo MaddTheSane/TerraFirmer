@@ -37,7 +37,6 @@ class SteamConfig {
 		try parse(fileAt: urlPath)
 	}
 	
-	//    public subscript(index: Data.Index) -> UInt8
 	subscript(index: String) -> String? {
 		guard let root = root else {
 			return nil
