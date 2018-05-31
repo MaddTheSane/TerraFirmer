@@ -239,7 +239,9 @@ class CommonCryptorWrapper {
 	///
 	/// These are the padding options available for block modes.
 	enum Padding: CCPadding {
+		/// No padding
 		case none = 0
+		/// PKCS7 Padding
 		case PKCS7 = 1
 	}
 	
