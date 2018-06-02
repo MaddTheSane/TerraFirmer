@@ -20,7 +20,7 @@ class SteamConfig {
 			}
 			let ofs1 = path.index(after: ofs)
 			
-			return children[String(path[path.startIndex ..< ofs])]?.find(path:String(path[ofs1..<path.endIndex]))
+			return children[String(path[path.startIndex ..< ofs])]?.find(path:String(path[ofs1 ..< path.endIndex]))
 		}
 	}
 	

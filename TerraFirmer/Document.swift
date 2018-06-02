@@ -8,26 +8,9 @@
 
 import Cocoa
 
-class Document: NSDocument, WorldLoadDelegate {
-	func willReadHeader(_: World) {
-		
-	}
-	
-	func didReadHeader(_: World) {
-		
-	}
-	
-	func willReadTiles(_: World, totalCount: Int) {
-		
-	}
-	
-	func readingTileInWorld(_: World, atIndex: Int) {
-		
-	}
-	
-	func didReadTiles(_: World, wasSuccessful: Bool) {
-		
-	}
+class Document: NSDocument {
+	private var stopLoading = false
+	private var totalTiles = 0
 	
 	var world = World()
 	private var allLoaded = false
@@ -55,6 +38,7 @@ class Document: NSDocument, WorldLoadDelegate {
 	}
 
 	override func read(from url: URL, ofType typeName: String) throws {
+		world.loadDelegate = self
 		DispatchQueue.global().async {
 			do {
 				try self.world.open(from: url)
@@ -64,6 +48,11 @@ class Document: NSDocument, WorldLoadDelegate {
 		}
 	}
 	
+	override func close() {
+		stopLoading = true
+		super.close()
+	}
+	
 	override var isEntireFileLoaded: Bool {
 		return allLoaded
 	}
@@ -71,5 +60,52 @@ class Document: NSDocument, WorldLoadDelegate {
 	@IBAction func showKills(_ sender: Any?) {
 		
 	}
+}
+
+extension Document: WorldLoadDelegate {
+	func willReadMap(_ worldObj: World) {
+		assert(self.world === worldObj)
+		DispatchQueue.main.async {
+			
+		}
+	}
+	
+	func didReadMap(_ world: World) {
+		assert(self.world === world)
+		DispatchQueue.main.async {
+			self.allLoaded = true
+		}
+	}
+	
+	func willReadTiles(_ worldObj: World, totalCount: Int) {
+		assert(self.world === worldObj)
+		DispatchQueue.main.async {
+			self.totalTiles = totalCount
+		}
+	}
+	
+	func readingTileInWorld(_ worldObj: World, atIndex: Int) {
+		assert(self.world === worldObj)
+		DispatchQueue.main.async {
+			
+		}
+	}
+	
+	func didReadTiles(_ worldObj: World, wasSuccessful: Bool) {
+		assert(self.world === worldObj)
+		DispatchQueue.main.async {
+			
+		}
+	}
+	
+	func shouldCancelLoading(_ worldObj: World) -> Bool {
+		assert(self.world === worldObj)
+		var toRet = false
+		DispatchQueue.main.sync {
+			toRet = stopLoading
+		}
+		return toRet
+	}
+
 }
 

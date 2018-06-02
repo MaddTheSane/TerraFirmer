@@ -49,11 +49,13 @@ extension TerrariaEntity {
 }
 
 protocol WorldLoadDelegate: class {
-	func willReadHeader(_ :World)
-	func didReadHeader(_ :World)
+	func willReadMap(_ :World)
+	func didReadMap(_ :World)
 	func willReadTiles(_: World, totalCount: Int)
 	func readingTileInWorld(_: World, atIndex: Int)
 	func didReadTiles(_: World, wasSuccessful: Bool)
+	
+	func shouldCancelLoading(_: World) -> Bool
 }
 
 final class World {
@@ -134,9 +136,9 @@ final class World {
 	
 	func open(from: URL) throws {
 		let handle = try FileHandle(forReadingFrom: from)
-		loadDelegate?.willReadHeader(self)
+		loadDelegate?.willReadMap(self)
 		defer {
-			loadDelegate?.didReadHeader(self)
+			loadDelegate?.didReadMap(self)
 		}
 		guard let version2 = handle.readUInt32() else {
 			throw LoadError.unexpectedEndOfFile
@@ -166,6 +168,10 @@ final class World {
 		
 		guard let numSections = handle.readUInt16() else {
 			throw LoadError.unexpectedEndOfFile
+		}
+		guard !(loadDelegate?.shouldCancelLoading(self) ?? false) else {
+			//throw NSError(domain: NSCocoaErrorDomain, code: NSUserCancelledError)
+			return
 		}
 		var sections = [Int32]()
 		for _ in 0 ..< numSections {
@@ -198,6 +204,10 @@ final class World {
 		guard loadHeader(handle: handle, version: version) else {
 			throw LoadError.unexpectedEndOfFile
 		}
+		guard !(loadDelegate?.shouldCancelLoading(self) ?? false) else {
+			//throw NSError(domain: NSCocoaErrorDomain, code: NSUserCancelledError)
+			return
+		}
 		
 		handle.seek(toFileOffset: UInt64(sections[1]))
 		guard loadTiles(handle: handle, version: version, extra: extra) else {
@@ -205,14 +215,27 @@ final class World {
 			throw LoadError.unexpectedEndOfFile
 		}
 		loadDelegate?.didReadTiles(self, wasSuccessful: true)
+		guard !(loadDelegate?.shouldCancelLoading(self) ?? false) else {
+			//throw NSError(domain: NSCocoaErrorDomain, code: NSUserCancelledError)
+			return
+		}
 		
 		handle.seek(toFileOffset: UInt64(sections[2]))
 		guard loadChests(handle: handle, version: version) else {
 			throw LoadError.unexpectedEndOfFile
 		}
+		guard !(loadDelegate?.shouldCancelLoading(self) ?? false) else {
+			//throw NSError(domain: NSCocoaErrorDomain, code: NSUserCancelledError)
+			return
+		}
+
 		handle.seek(toFileOffset: UInt64(sections[3]))
 		guard loadSigns(handle: handle, version: version) else {
 			throw LoadError.unexpectedEndOfFile
+		}
+		guard !(loadDelegate?.shouldCancelLoading(self) ?? false) else {
+			//throw NSError(domain: NSCocoaErrorDomain, code: NSUserCancelledError)
+			return
 		}
 		handle.seek(toFileOffset: UInt64(sections[4]))
 		guard loadNPCs(handle: handle, version: version) else {
@@ -236,6 +259,10 @@ final class World {
 				throw LoadError.unexpectedEndOfFile
 			}
 		}
+		guard !(loadDelegate?.shouldCancelLoading(self) ?? false) else {
+			//throw NSError(domain: NSCocoaErrorDomain, code: NSUserCancelledError)
+			return
+		}
 		if (version >= 189) {
 			handle.seek(toFileOffset: UInt64(sections[7]))
 			guard loadTownManager(handle: handle, version: version) else {
@@ -243,6 +270,11 @@ final class World {
 			}
 		}
 		
+		guard !(loadDelegate?.shouldCancelLoading(self) ?? false) else {
+			//throw NSError(domain: NSCocoaErrorDomain, code: NSUserCancelledError)
+			return
+		}
+
 		//if (!player.isEmpty()) {
 		//	loadPlayer();
 		//}
