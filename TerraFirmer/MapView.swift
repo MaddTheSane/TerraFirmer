@@ -9,6 +9,20 @@
 import Cocoa
 import Quartz
 
+func locateTerrariaApp() throws -> URL {
+	//"org.Terraria"
+	var errOut: Unmanaged<CFError>? = nil
+	guard let appNSList = LSCopyApplicationURLsForBundleIdentifier("org.Terraria" as NSString, &errOut)?.takeRetainedValue() as NSArray?,
+		let appList = appNSList as? [URL] else {
+			if let errThrow = errOut?.takeRetainedValue() {
+				throw errThrow
+			} else {
+				throw NSError(domain: NSCocoaErrorDomain, code: -1)
+			}
+	}
+	return appList[0]
+}
+
 class MapView: NSView {
 
 	override init(frame frameRect: NSRect) {

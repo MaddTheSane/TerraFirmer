@@ -305,6 +305,10 @@ final class World {
 		// TODO: Speed this up, but how?
 		//var
 		for x in 0 ..< tilesWide {
+			guard !(loadDelegate?.shouldCancelLoading(self) ?? false) else {
+				//throw NSError(domain: NSCocoaErrorDomain, code: NSUserCancelledError)
+				return true
+			}
 			var offset = x
 			var y = 0
 			repeat {

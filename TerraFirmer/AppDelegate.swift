@@ -10,6 +10,7 @@ import Cocoa
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
+	let steamInfo = try? SteamConfig()
 
 	func applicationWillFinishLaunching(_ notification: Notification) {
 		_=WorldInfo.shared
@@ -26,6 +27,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 	func applicationOpenUntitledFile(_ sender: NSApplication) -> Bool {
 		return false
+	}
+	
+	func scanWorlds() {
+		
 	}
 }
 

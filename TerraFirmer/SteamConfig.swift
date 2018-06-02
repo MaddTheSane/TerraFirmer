@@ -77,10 +77,11 @@ extension SteamConfig.Element {
 		let match = i[0]
 		var aRange = match.range(at: 1)
 		name = line[Range(aRange, in: line)!].lowercased()
-		if i.count > 2 {
+		if i.count >= 2 {
 			aRange = i[1].range(at: 1)
 			let stringRange = Range(aRange, in: line)!
-			value = line[stringRange].replacingOccurrences(of: "\\\\", with: "\\")
+			let subStr = line[stringRange]
+			value = subStr.replacingOccurrences(of: "\\\\", with: "\\")
 		}
 		line = lines[0]
 		if line.contains("{") {

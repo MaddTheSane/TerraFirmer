@@ -87,18 +87,18 @@ struct Tile {
 extension Tile {
 	/// - returns: `nil` if unexpected end of file was reached.
 	init?(fileHandle handle: FileHandle, extra: [Bool], rle: inout Int) {
-		guard let flags1: UInt8 = handle.readUInt8() else {
+		guard let flags1 = handle.readUInt8() else {
 			return nil
 		}
 		var flags2 = UInt8()
 		var flags3 = UInt8()
 		if (flags1 & 1) != 0 {  // has flags2
-			guard let tmpFlags2: UInt8 = handle.readUInt8() else {
+			guard let tmpFlags2 = handle.readUInt8() else {
 				return nil
 			}
 			flags2 = tmpFlags2
 			if (flags2 & 1) != 0 {  // has flags3
-				guard let tmpFlags3: UInt8 = handle.readUInt8() else {
+				guard let tmpFlags3 = handle.readUInt8() else {
 					return nil
 				}
 				flags3 = tmpFlags3
@@ -106,19 +106,19 @@ extension Tile {
 		}
 		let active = (flags1 & 2) != 0;
 		flags = active ? .active : [];
-		if (active) {
+		if active {
 			guard let tempType1 = handle.readUInt8() else {
 				return nil
 			}
 			type = Int16(tempType1)
 			if (flags1 & 0x20) != 0 {  // 2-byte type
-				guard let tempType2: Int8 = handle.readInt8() else {
+				guard let tempType2 = handle.readInt8() else {
 					return nil
 				}
 				type |= Int16(tempType2) << 8;
 			}
 			if (extra[Int(type)]) {
-				guard let tmpU: Int16 = handle.readInt16(), let tmpV: Int16 = handle.readInt16() else {
+				guard let tmpU = handle.readInt16(), let tmpV = handle.readInt16() else {
 					return nil
 				}
 				u = tmpU
@@ -128,7 +128,7 @@ extension Tile {
 				v = -1
 			}
 			if (flags3 & 0x8) != 0 {
-				guard let tmpClr: UInt8 = handle.readUInt8() else {
+				guard let tmpClr = handle.readUInt8() else {
 					return nil
 				}
 				color = tmpClr
@@ -142,7 +142,7 @@ extension Tile {
 			v = 0
 		}
 		if (flags1 & 4) != 0 {  // wall
-			guard let tmpWall: UInt8 = handle.readUInt8() else {
+			guard let tmpWall = handle.readUInt8() else {
 				return nil
 			}
 			wall = tmpWall
@@ -160,7 +160,7 @@ extension Tile {
 			wallV = 0
 		}
 		if (flags1 & 0x18) != 0 {
-			guard let tmpLiquid: UInt8 = handle.readUInt8() else {
+			guard let tmpLiquid = handle.readUInt8() else {
 				return nil
 			}
 			liquid = tmpLiquid
@@ -182,11 +182,11 @@ extension Tile {
 		if (flags2 & 8) != 0 { // green wire
 			flags.insert(.greenWire)
 		}
-		let slop = (flags2 >> 4) & 7;
-		if (slop == 1)  { // half
+		let slop = (flags2 >> 4) & 7
+		if slop == 1 { // half
 			flags.insert(.half)
 		}
-		slope = slop > 1 ? slop - 1 : 0;
+		slope = slop > 1 ? slop - 1 : 0
 		
 		if (flags3 & 2) != 0 { // actuator
 			flags.insert(.actuator)
@@ -198,16 +198,16 @@ extension Tile {
 			flags.insert(.yellowWire)
 		}
 		
-		rle = 0;
+		rle = 0
 		switch (flags1 >> 6) {
 		case 1:
-			guard let rle1: UInt8 = handle.readUInt8() else {
+			guard let rle1 = handle.readUInt8() else {
 				return nil
 			}
 			rle = Int(rle1)
 
 		case 2:
-			guard let rle1: UInt16 = handle.readUInt16() else {
+			guard let rle1 = handle.readUInt16() else {
 				return nil
 			}
 			rle = Int(rle1)
