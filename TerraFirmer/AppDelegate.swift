@@ -30,7 +30,31 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 	}
 	
 	func scanWorlds() {
+		var worldPaths = [URL]()
+		if let steamInstallPath = steamInfo?["software/valve/steam/baseinstallfolder_1"] {
+			let steamDir = URL(fileURLWithPath: steamInstallPath)
+			let userData = steamDir.appendingPathComponent("userdata", isDirectory: true)
+			if let dirEnum = FileManager.default.enumerator(at: userData, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]) {
+				for dir in dirEnum {
+					var dirE = (dir as! URL).appendingPathComponent("105600")
+					dirE.appendPathComponent("remote")
+					dirE.appendPathComponent("worlds", isDirectory: true)
+					guard (try? dirE.checkResourceIsReachable()) ?? false else {
+						continue
+					}
+					worldPaths.append(dirE)
+				}
+			}
+		}
 		
+		var localURL = try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+		localURL.appendPathComponent("Terraria")
+		localURL.appendPathComponent("Worlds")
+		worldPaths.append(localURL)
+		
+		for worldURL in worldPaths {
+			_=worldURL
+		}
 	}
 }
 

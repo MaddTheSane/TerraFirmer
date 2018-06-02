@@ -100,12 +100,7 @@ extension Document: WorldLoadDelegate {
 	
 	func shouldCancelLoading(_ worldObj: World) -> Bool {
 		assert(self.world === worldObj)
-		var toRet = false
-		DispatchQueue.main.sync {
-			toRet = stopLoading
-		}
-		return toRet
+		return stopLoading
 	}
-
 }
 
