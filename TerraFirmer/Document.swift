@@ -8,7 +8,27 @@
 
 import Cocoa
 
-class Document: NSDocument {
+class Document: NSDocument, WorldLoadDelegate {
+	func willReadHeader(_: World) {
+		
+	}
+	
+	func didReadHeader(_: World) {
+		
+	}
+	
+	func willReadTiles(_: World, totalCount: Int) {
+		
+	}
+	
+	func readingTileInWorld(_: World, atIndex: Int) {
+		
+	}
+	
+	func didReadTiles(_: World, wasSuccessful: Bool) {
+		
+	}
+	
 	var world = World()
 	private var allLoaded = false
 	@IBOutlet weak var mapView: MapView!

@@ -68,7 +68,7 @@ let asciiDecimal: CharacterSet = {
 	return CharacterSet.decimalDigits.intersection(asciiSet)
 }()
 
-struct WorldInfo {
+class WorldInfo {
 	static let shared = WorldInfo()
 	
 	enum WorldErrors: Error {
@@ -139,51 +139,51 @@ struct WorldInfo {
 		
 		if let skyVal = bDict["sky"],
 			let skyCol = DTColorCreateWithHTMLName(skyVal) {
-			sky = skyCol
+			skyColor = skyCol
 		} else {
-			sky = .clear
+			skyColor = .clear
 		}
 		
 		if let skyVal = bDict["earth"],
 			let skyCol = DTColorCreateWithHTMLName(skyVal) {
-			earth = skyCol
+			earthColor = skyCol
 		} else {
-			earth = .clear
+			earthColor = .clear
 		}
 		
 		if let skyVal = bDict["rock"],
 			let skyCol = DTColorCreateWithHTMLName(skyVal) {
-			rock = skyCol
+			rockColor = skyCol
 		} else {
-			rock = .clear
+			rockColor = .clear
 		}
 
 		if let skyVal = bDict["hell"],
 			let skyCol = DTColorCreateWithHTMLName(skyVal) {
-			hell = skyCol
+			hellColor = skyCol
 		} else {
-			hell = .clear
+			hellColor = .clear
 		}
 
 		if let skyVal = bDict["water"],
 			let skyCol = DTColorCreateWithHTMLName(skyVal) {
-			water = skyCol
+			waterColor = skyCol
 		} else {
-			water = .clear
+			waterColor = .clear
 		}
 
 		if let skyVal = bDict["lava"],
 			let skyCol = DTColorCreateWithHTMLName(skyVal) {
-			lava = skyCol
+			lavaColor = skyCol
 		} else {
-			lava = .clear
+			lavaColor = .clear
 		}
 
 		if let skyVal = bDict["honey"],
 			let skyCol = DTColorCreateWithHTMLName(skyVal) {
-			honey = skyCol
+			honeyColor = skyCol
 		} else {
-			honey = .clear
+			honeyColor = .clear
 		}
 		// Convoluted mess end
 	}
@@ -513,11 +513,11 @@ struct WorldInfo {
 	let npcsByBanner: [Int32: NPC]
 	let npcsByName: [String: NPC]
 	
-	let sky: NSColor
-	let earth: NSColor
-	let rock: NSColor
-	let hell: NSColor
-	let water: NSColor
-	let lava: NSColor
-	let honey: NSColor
+	let skyColor: NSColor
+	let earthColor: NSColor
+	let rockColor: NSColor
+	let hellColor: NSColor
+	let waterColor: NSColor
+	let lavaColor: NSColor
+	let honeyColor: NSColor
 }

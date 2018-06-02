@@ -51,6 +51,9 @@ extension TerrariaEntity {
 protocol WorldLoadDelegate: class {
 	func willReadHeader(_ :World)
 	func didReadHeader(_ :World)
+	func willReadTiles(_: World, totalCount: Int)
+	func readingTileInWorld(_: World, atIndex: Int)
+	func didReadTiles(_: World, wasSuccessful: Bool)
 }
 
 final class World {
@@ -131,6 +134,10 @@ final class World {
 	
 	func open(from: URL) throws {
 		let handle = try FileHandle(forReadingFrom: from)
+		loadDelegate?.willReadHeader(self)
+		defer {
+			loadDelegate?.didReadHeader(self)
+		}
 		guard let version2 = handle.readUInt32() else {
 			throw LoadError.unexpectedEndOfFile
 		}
@@ -194,8 +201,10 @@ final class World {
 		
 		handle.seek(toFileOffset: UInt64(sections[1]))
 		guard loadTiles(handle: handle, version: version, extra: extra) else {
+			loadDelegate?.didReadTiles(self, wasSuccessful: false)
 			throw LoadError.unexpectedEndOfFile
 		}
+		loadDelegate?.didReadTiles(self, wasSuccessful: true)
 		
 		handle.seek(toFileOffset: UInt64(sections[2]))
 		guard loadChests(handle: handle, version: version) else {
@@ -260,7 +269,9 @@ final class World {
 	}
 	
 	private func loadTiles(handle: FileHandle, version: Int, extra: [Bool]) -> Bool {
+		loadDelegate?.willReadTiles(self, totalCount: tiles.count)
 		// TODO: Speed this up, but how?
+		//var
 		for x in 0 ..< tilesWide {
 			var offset = x
 			var y = 0
@@ -284,6 +295,7 @@ final class World {
 					}
 				}
 				y += rle
+				loadDelegate?.readingTileInWorld(self, atIndex: x * tilesHigh + y)
 				offset = destOffset
 			} while y < tilesHigh
 		}
