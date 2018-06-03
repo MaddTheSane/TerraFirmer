@@ -15,6 +15,9 @@ class Document: NSDocument {
 	var world = World()
 	private var allLoaded = false
 	@IBOutlet weak var mapView: MapView!
+	@IBOutlet weak var statusLine: NSTextField!
+	@IBOutlet weak var progressWindow: NSWindow!
+	@IBOutlet weak var progressBar: NSProgressIndicator!
 
 	override init() {
 	    super.init()
@@ -63,11 +66,91 @@ class Document: NSDocument {
 }
 
 extension Document: WorldLoadDelegate {
-	func willReadMap(_ worldObj: World) {
-		assert(self.world === worldObj)
+	func willReadHeader(_ worldObj: World) {
 		DispatchQueue.main.async {
 			
 		}
+	}
+	
+	func didReadHeader(_ worldObj: World) {
+		
+	}
+	
+	func willReadChests(_ worldObj: World) {
+		DispatchQueue.main.async {
+			
+		}
+	}
+	
+	func didReadChests(_ worldObj: World) {
+		
+	}
+	
+	func willReadSigns(_ worldObj: World) {
+		DispatchQueue.main.async {
+			
+		}
+	}
+	
+	func didReadSigns(_ worldObj: World) {
+		
+	}
+	
+	func willReadNPCs(_ worldObj: World) {
+		DispatchQueue.main.async {
+			
+		}
+	}
+	
+	func didReadNPCs(_ worldObj: World) {
+		
+	}
+	
+	func willReadDummies(_ worldObj: World) {
+		DispatchQueue.main.async {
+			
+		}
+	}
+	
+	func didReadDummies(_ worldObj: World) {
+		
+	}
+	
+	func willReadEntities(_ worldObj: World) {
+		DispatchQueue.main.async {
+			
+		}
+	}
+	
+	func didReadEntities(_ worldObj: World) {
+		
+	}
+	
+	func willReadPressurePlates(_ worldObj: World) {
+		DispatchQueue.main.async {
+			
+		}
+	}
+	
+	func didReadPressurePlates(_ worldObj: World) {
+		
+	}
+	
+	func willReadTownManager(_ worldObj: World) {
+		DispatchQueue.main.async {
+			
+		}
+	}
+	
+	func didReadTownManager(_ worldObj: World) {
+		
+	}
+	
+	func willReadMap(_ worldObj: World) {
+		assert(self.world === worldObj)
+		//DispatchQueue.main.async {
+		//
+		//}
 	}
 	
 	func didReadMap(_ world: World) {
@@ -84,10 +167,11 @@ extension Document: WorldLoadDelegate {
 		}
 	}
 	
-	func readingTileInWorld(_ worldObj: World, atIndex: Int) {
+	func countOfTilesRead(in worldObj: World, count: Int) {
 		assert(self.world === worldObj)
 		DispatchQueue.main.async {
-			
+			let percentage = CGFloat(count) / CGFloat(self.totalTiles)
+			self.statusLine.stringValue = String(format: NSLocalizedString("Loading tiles… %f%%", comment: "Loading Tiles percentage"), percentage * 100)
 		}
 	}
 	

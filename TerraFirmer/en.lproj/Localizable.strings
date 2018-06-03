@@ -1,0 +1,9 @@
+/* 
+  Localizable.strings
+  TerraFirmer
+
+  Created by C.W. Betts on 6/3/18.
+  Copyright © 2018 C.W. Betts. All rights reserved.
+*/
+
+"Loading tiles… %f%%" = "Loading tiles… %f%%";

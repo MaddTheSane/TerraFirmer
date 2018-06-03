@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5513909220C492E7006E4621 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5513909420C492E7006E4621 /* Localizable.strings */; };
 		551648C420AF5B0B00B3D419 /* lzx.c in Sources */ = {isa = PBXBuildFile; fileRef = 551648C220AF5B0B00B3D419 /* lzx.c */; };
 		551648C720AF5BAC00B3D419 /* LZXWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551648C620AF5BAC00B3D419 /* LZXWrapper.swift */; };
 		5551D27F20B3E01A00B0D884 /* SteamConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5551D27E20B3E01A00B0D884 /* SteamConfig.swift */; };
@@ -54,6 +55,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5513909320C492E7006E4621 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		551648C220AF5B0B00B3D419 /* lzx.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lzx.c; sourceTree = "<group>"; };
 		551648C320AF5B0B00B3D419 /* lzx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lzx.h; sourceTree = "<group>"; };
 		551648C620AF5BAC00B3D419 /* LZXWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LZXWrapper.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 				559DFEEE20AE508100355AF1 /* DTCompatibility.h */,
 				551648C520AF5B1300B3D419 /* lzx */,
 				558051F720B36C730042446C /* InfoPlist.strings */,
+				5513909420C492E7006E4621 /* Localizable.strings */,
 			);
 			path = TerraFirmer;
 			sourceTree = "<group>";
@@ -308,6 +311,7 @@
 				559DFEE120AE500E00355AF1 /* Document.xib in Resources */,
 				559DFF2220AE550B00355AF1 /* prefixes.json in Resources */,
 				559DFF1B20AE508200355AF1 /* walls.json in Resources */,
+				5513909220C492E7006E4621 /* Localizable.strings in Resources */,
 				559DFF1620AE508200355AF1 /* tiles_vs.glsl in Resources */,
 				559DFEE620AE500F00355AF1 /* MainMenu.xib in Resources */,
 				559DFF1A20AE508200355AF1 /* tiles_fs.glsl in Resources */,
@@ -375,6 +379,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		5513909420C492E7006E4621 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5513909320C492E7006E4621 /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		558051F720B36C730042446C /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (

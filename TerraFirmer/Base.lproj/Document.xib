@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14109"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="Document" customModule="TerraFirmer" customModuleProvider="target">
             <connections>
                 <outlet property="mapView" destination="f8B-To-m2X" id="dls-NQ-KFT"/>
+                <outlet property="progressBar" destination="dbh-Ca-4f5" id="ZZq-rf-OJZ"/>
+                <outlet property="progressWindow" destination="uvu-mV-nwI" id="9HO-20-Rxb"/>
+                <outlet property="statusLine" destination="SRk-ba-3oz" id="279-TN-zGw"/>
                 <outlet property="window" destination="xOd-HO-29H" id="JIz-fz-R2o"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="xOd-HO-29H" userLabel="Window">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
@@ -55,6 +58,42 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-x8E"/>
             </connections>
+        </window>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" frameAutosaveName="" animationBehavior="default" id="uvu-mV-nwI">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="131" y="158" width="240" height="99"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <view key="contentView" id="ltm-3R-1kF">
+                <rect key="frame" x="0.0" y="0.0" width="240" height="99"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <progressIndicator wantsLayer="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="dbh-Ca-4f5">
+                        <rect key="frame" x="20" y="60" width="200" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="200" id="LeK-7H-cRl"/>
+                        </constraints>
+                    </progressIndicator>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SRk-ba-3oz">
+                        <rect key="frame" x="102" y="36" width="37" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="inv-aK-kXO">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="SRk-ba-3oz" secondAttribute="bottom" constant="20" symbolic="YES" id="Cca-ho-AQZ"/>
+                    <constraint firstItem="SRk-ba-3oz" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ltm-3R-1kF" secondAttribute="leading" constant="20" symbolic="YES" id="W6x-6y-XCQ"/>
+                    <constraint firstItem="dbh-Ca-4f5" firstAttribute="top" secondItem="ltm-3R-1kF" secondAttribute="top" constant="20" symbolic="YES" id="deH-XT-BWM"/>
+                    <constraint firstItem="dbh-Ca-4f5" firstAttribute="leading" secondItem="ltm-3R-1kF" secondAttribute="leading" priority="999" constant="20" symbolic="YES" id="f5x-oQ-YaC"/>
+                    <constraint firstItem="SRk-ba-3oz" firstAttribute="top" secondItem="dbh-Ca-4f5" secondAttribute="bottom" constant="8" symbolic="YES" id="hXH-1W-T8w"/>
+                    <constraint firstItem="dbh-Ca-4f5" firstAttribute="centerX" secondItem="ltm-3R-1kF" secondAttribute="centerX" id="kRJ-RK-fHc"/>
+                    <constraint firstItem="SRk-ba-3oz" firstAttribute="centerX" secondItem="ltm-3R-1kF" secondAttribute="centerX" id="oQ6-oB-9tt"/>
+                </constraints>
+            </view>
+            <point key="canvasLocation" x="169" y="500.5"/>
         </window>
     </objects>
 </document>
