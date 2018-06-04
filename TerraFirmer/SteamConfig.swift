@@ -92,9 +92,10 @@ extension SteamConfig.Element {
 					lines.removeFirst()
 					return
 				}
-				if let e = SteamConfig.Element(lines: &lines) {
-					children[e.name] = e
+				guard let e = SteamConfig.Element(lines: &lines) else {
+					return nil
 				}
+				children[e.name] = e
 			}
 		}
 	}

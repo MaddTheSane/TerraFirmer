@@ -171,7 +171,7 @@ extension Document: WorldLoadDelegate {
 		assert(self.world === worldObj)
 		DispatchQueue.main.async {
 			let percentage = CGFloat(count) / CGFloat(self.totalTiles)
-			self.statusLine.stringValue = String(format: NSLocalizedString("Loading tiles… %f%%", comment: "Loading Tiles percentage"), percentage * 100)
+			self.statusLine?.stringValue = String(format: NSLocalizedString("Loading tiles… %f%%", comment: "Loading Tiles percentage"), percentage * 100)
 		}
 	}
 	
