@@ -10,7 +10,6 @@ import Cocoa
 import Quartz
 
 func locateTerrariaApp() throws -> URL {
-	//"org.Terraria"
 	var errOut: Unmanaged<CFError>? = nil
 	guard let appNSList = LSCopyApplicationURLsForBundleIdentifier("org.Terraria" as NSString, &errOut)?.takeRetainedValue() as NSArray?,
 		let appList = appNSList as? [URL] else {

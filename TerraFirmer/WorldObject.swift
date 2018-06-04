@@ -756,7 +756,7 @@ QDir dir;
 			}
 		}
 		var handle = origHandle
-		if (version >= 135) {
+		if version >= 135 {
 			let magicData = handle.readData(ofLength: 7)
 			guard let magic = String(data: magicData, encoding: .utf8),
 				magic == "relogic" else {
@@ -850,6 +850,7 @@ QDir dir;
 
 				var outChunk = Data(count: CHUNK_SIZE)
 				repeat {
+					outChunk.count = CHUNK_SIZE
 					outChunk.withUnsafeMutableBytes({ (outBytes: UnsafeMutablePointer<Bytef>) -> Void in
 						strm.avail_out = uInt(CHUNK_SIZE)
 						strm.next_out = outBytes
