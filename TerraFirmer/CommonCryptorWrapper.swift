@@ -7,7 +7,8 @@
 //
 
 import Foundation
-//import CommonCrypto
+import CommonCrypto
+import CommonCrypto.CommonCryptor
 
 class CommonCryptorWrapper {
 	enum ErrorCode: CCCryptorStatus, Error {
@@ -98,16 +99,13 @@ class CommonCryptorWrapper {
 		var tmpCryptoRef: CCCryptorRef? = nil
 		var iv: [UInt8]
 		if let iniVec = initializationVector {
-			iv = iniVec.withUnsafeBytes({ (bytes: UnsafePointer<UInt8>) -> [UInt8] in
-				let unsafeBytes = UnsafeBufferPointer(start: bytes, count: iniVec.count)
-				return Array(unsafeBytes)
-			})
+			iv = Array(iniVec)
 		} else {
 			iv = []
 		}
-		let status = key.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> CCCryptorStatus in
+		let status = key.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> CCCryptorStatus in
 			return iv.withUnsafeBytes({ (buf) -> CCCryptorStatus in
-				return CCCryptorCreate(operation.rawValue, algorithm.rawValue, options.rawValue, UnsafeRawPointer(bytes), key.count, iv.count == 0 ? nil : buf.baseAddress, &tmpCryptoRef)
+				return CCCryptorCreate(operation.rawValue, algorithm.rawValue, options.rawValue, bytes.baseAddress, bytes.count, iv.count == 0 ? nil : buf.baseAddress, &tmpCryptoRef)
 			})
 		}
 		
@@ -139,13 +137,12 @@ class CommonCryptorWrapper {
 		let toRetSize = CCCryptorGetOutputLength(crypto, data.count, false)
 		var toRet = Data(count: toRetSize)
 		
-		let status = data.withUnsafeBytes { (newBytes: UnsafePointer<UInt8>) -> CCCryptorStatus in
+		let status = data.withUnsafeBytes { (newBytes: UnsafeRawBufferPointer) -> CCCryptorStatus in
 			var newStatus: CCCryptorStatus = 0
 			var written = 0
 			repeat {
-				let retCount = toRet.count
-				newStatus = toRet.withUnsafeMutableBytes({ (toRetBytes: UnsafeMutablePointer<UInt8>) -> CCCryptorStatus in
-					return CCCryptorUpdate(crypto, UnsafeRawPointer(newBytes), data.count, UnsafeMutableRawPointer(toRetBytes), retCount, &written)
+				newStatus = toRet.withUnsafeMutableBytes({ (toRetBytes: UnsafeMutableRawBufferPointer) -> CCCryptorStatus in
+					return CCCryptorUpdate(crypto, newBytes.baseAddress, newBytes.count, toRetBytes.baseAddress, toRetBytes.count, &written)
 				})
 				toRet.append(Data(count: 128))
 			} while newStatus == kCCBufferTooSmall
@@ -171,9 +168,8 @@ class CommonCryptorWrapper {
 		var written = 0
 		var status: CCCryptorStatus = 0
 		repeat {
-			let retCount = toRet.count
-			status = toRet.withUnsafeMutableBytes({ (toRetBytes: UnsafeMutablePointer<UInt8>) -> CCCryptorStatus in
-				return CCCryptorFinal(crypto, UnsafeMutableRawPointer(toRetBytes), retCount, &written)
+			status = toRet.withUnsafeMutableBytes({ (toRetBytes: UnsafeMutableRawBufferPointer) -> CCCryptorStatus in
+				return CCCryptorFinal(crypto, toRetBytes.baseAddress, toRetBytes.count, &written)
 			})
 			toRet.append(Data(count: 128))
 		} while status == kCCBufferTooSmall
@@ -193,10 +189,7 @@ class CommonCryptorWrapper {
 	func reset(initializationVector iv: Data? = nil) throws {
 		var ivec: [UInt8]
 		if let iniVec = iv {
-			ivec = iniVec.withUnsafeBytes({ (bytes: UnsafePointer<UInt8>) -> [UInt8] in
-				let unsafeBytes = UnsafeBufferPointer(start: bytes, count: iniVec.count)
-				return Array(unsafeBytes)
-			})
+			ivec = Array(iniVec)
 		} else {
 			ivec = []
 		}
@@ -252,17 +245,14 @@ class CommonCryptorWrapper {
 		var tmpCryptoRef: CCCryptorRef? = nil
 		var iv: [UInt8]
 		if let iniVec = initializationVector {
-			iv = iniVec.withUnsafeBytes({ (bytes: UnsafePointer<UInt8>) -> [UInt8] in
-				let unsafeBytes = UnsafeBufferPointer(start: bytes, count: iniVec.count)
-				return Array(unsafeBytes)
-			})
+			iv = Array(iniVec)
 		} else {
 			iv = []
 		}
-		let status = key.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> CCCryptorStatus in
-			return tweak.withUnsafeBytes({ (tweakBytes: UnsafePointer<UInt8>) -> CCCryptorStatus in
+		let status = key.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> CCCryptorStatus in
+			return tweak.withUnsafeBytes({ (tweakBytes: UnsafeRawBufferPointer) -> CCCryptorStatus in
 				return iv.withUnsafeBytes({ (buf) -> CCCryptorStatus in
-					return CCCryptorCreateWithMode(operation.rawValue, mode.rawValue, algorithm.rawValue, padding.rawValue, iv.count == 0 ? nil : buf.baseAddress, UnsafeRawPointer(bytes), key.count, UnsafeRawPointer(tweakBytes), tweak.count, Int32(numberOfRounds), options.rawValue, &tmpCryptoRef)
+					return CCCryptorCreateWithMode(operation.rawValue, mode.rawValue, algorithm.rawValue, padding.rawValue, iv.count == 0 ? nil : buf.baseAddress, bytes.baseAddress, bytes.count, tweakBytes.baseAddress, tweakBytes.count, Int32(numberOfRounds), options.rawValue, &tmpCryptoRef)
 				})
 			})
 		}
@@ -272,5 +262,4 @@ class CommonCryptorWrapper {
 		}
 		crypto = cryptoRef
 	}
-
 }

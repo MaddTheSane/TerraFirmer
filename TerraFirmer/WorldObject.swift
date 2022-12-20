@@ -48,7 +48,7 @@ extension TerrariaEntity {
 	}
 }
 
-protocol WorldLoadDelegate: class {
+protocol WorldLoadDelegate: AnyObject {
 	func willReadMap(_ :World)
 	func didReadMap(_ :World)
 	func willReadHeader(_: World)
@@ -840,9 +840,9 @@ QDir dir;
 			strm.zfree = nil
 			strm.opaque = nil
 			strm.avail_in = uInt(toRead.count)
-			toRead.withUnsafeBytes { (headBytes: UnsafePointer<Bytef>) -> Void in
-				let unsafebc = UnsafeMutablePointer(mutating: headBytes)
-				strm.next_in = unsafebc
+			toRead.withUnsafeBytes { (headBytes: UnsafeRawBufferPointer) -> Void in
+				let unsafebc = UnsafeMutableRawBufferPointer(mutating: headBytes)
+				strm.next_in = unsafebc.assumingMemoryBound(to: Bytef.self).baseAddress
 				inflateInit2(&strm, -15)
 				defer {
 					inflateEnd(&strm)
@@ -851,9 +851,9 @@ QDir dir;
 				var outChunk = Data(count: CHUNK_SIZE)
 				repeat {
 					outChunk.count = CHUNK_SIZE
-					outChunk.withUnsafeMutableBytes({ (outBytes: UnsafeMutablePointer<Bytef>) -> Void in
-						strm.avail_out = uInt(CHUNK_SIZE)
-						strm.next_out = outBytes
+					outChunk.withUnsafeMutableBytes({ (outBytes: UnsafeMutableRawBufferPointer) -> Void in
+						strm.avail_out = uInt(outBytes.count)
+						strm.next_out = outBytes.assumingMemoryBound(to: Bytef.self).baseAddress
 						inflate(&strm, Z_NO_FLUSH)
 					})
 					outChunk.count = CHUNK_SIZE - Int(strm.avail_out)

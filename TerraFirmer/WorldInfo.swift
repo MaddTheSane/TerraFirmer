@@ -259,10 +259,10 @@ class WorldInfo {
 		struct MergeBlend {
 			var hasTile: Bool
 			var tile: Int16
-			var mask: TileFlag
+			var mask: TileFlag = []
 			var blend: Bool
 			var recursive: Bool
-			var direction: UInt8
+			var direction: UInt8 = 0
 			
 			private static func mergeBlends(from string: String, areBlends: Bool) throws -> [MergeBlend] {
 				var toRet = [MergeBlend]()
@@ -334,7 +334,7 @@ class WorldInfo {
 			}
 			
 			static func blend(from integer: Int16) -> MergeBlend {
-				return MergeBlend(hasTile: true, tile: integer, mask: TileFlag(), blend: true, recursive: false, direction: 0)
+				return MergeBlend(hasTile: true, tile: integer, blend: true, recursive: false)
 			}
 
 		}
@@ -355,6 +355,7 @@ class WorldInfo {
 				case maxX = "maxx"
 				case minY = "miny"
 				case maxY = "maxy"
+				case reference = "ref"
 			}
 			
 			var name: String?
@@ -371,6 +372,7 @@ class WorldInfo {
 			var minY: Int32?
 			var maxY: Int32?
 			var variants: [TempTileInfo]?
+			var reference: Int32?
 		}
 
 		enum CodingKeys: String, CodingKey {
@@ -388,6 +390,7 @@ class WorldInfo {
 			case skipY = "skipy"
 			case topPad = "toppad"
 			case variants = "var"
+			case reference = "ref"
 		}
 
 		let name: String
@@ -408,6 +411,7 @@ class WorldInfo {
 		let maxV: Int32
 		var isHilighting: Bool = false
 		private(set) var variants = [TileInfo]()
+		let reference: Int32
 		
 		required init(from decoder: Decoder) throws {
 			let values = try decoder.container(keyedBy: CodingKeys.self)
@@ -437,7 +441,9 @@ class WorldInfo {
 					//print("ugh, \(error)")
 				}
 			}
-			if values.contains(.merge), !(try values.decodeNil(forKey: .merge)), let blends = try values.decodeIfPresent(String.self, forKey: .merge) {
+			if values.contains(.merge),
+			   !(try values.decodeNil(forKey: .merge)),
+			   let blends = try values.decodeIfPresent(String.self, forKey: .merge) {
 				self.blends.append(contentsOf: try MergeBlend.merges(from: blends))
 			}
 			u = 0
@@ -446,10 +452,9 @@ class WorldInfo {
 			maxU = 0
 			minV = 0
 			maxV = 0
+			reference = try values.decodeIfPresent(Int32.self, forKey: .reference) ?? 0
 			if let temps = try values.decodeIfPresent([TempTileInfo].self, forKey: .variants) {
-				for otherTemp in temps {
-					variants.append(TileInfo(using: otherTemp, parent: self))
-				}
+				variants = temps.map({TileInfo(using: $0, parent: self)})
 			}
 		}
 		
@@ -474,10 +479,9 @@ class WorldInfo {
 			maxU = (temp.maxX ?? -1) * width
 			minV = (temp.minY ?? -1) * (height + skipY);
 			maxV = (temp.maxY ?? -1) * (height + skipY);
+			reference = temp.reference ?? 0
 			if let otherTemps = temp.variants {
-				for otherTemp in otherTemps {
-					variants.append(TileInfo(using: otherTemp, parent: self))
-				}
+				variants = otherTemps.map({TileInfo(using: $0, parent: self)})
 			}
 		}
 	}

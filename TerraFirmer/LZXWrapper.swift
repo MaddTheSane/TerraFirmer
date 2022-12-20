@@ -35,14 +35,14 @@ class LZX {
 	func decompress(_ inData: Data, outputLength: Int) throws -> Data {
 		var outData = Data(count: outputLength)
 		
-		let retVal = inData.withUnsafeBytes { (inBytes: UnsafePointer<UInt8>) -> Int32 in
-			return outData.withUnsafeMutableBytes({ (outBytes: UnsafeMutablePointer<UInt8>) -> Int32 in
-				return LZXdecompress(state, inBytes, outBytes, Int32(inData.count), Int32(outputLength))
+		let retVal = inData.withUnsafeBytes { (inBytes: UnsafeRawBufferPointer) -> Int32 in
+			return outData.withUnsafeMutableBytes({ (outBytes: UnsafeMutableRawBufferPointer) -> Int32 in
+                return LZXdecompress(state, inBytes.baseAddress, outBytes.baseAddress, Int32(inBytes.count), Int32(outBytes.count))
 			})
 		}
 		
 		guard retVal == DECR_OK else {
-			throw ErrorCode(rawValue: retVal)!
+			throw ErrorCode(rawValue: retVal) ?? ErrorCode.illegalData
 		}
 		return outData
 	}

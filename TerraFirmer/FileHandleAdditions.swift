@@ -10,11 +10,19 @@ import Foundation
 
 extension FileHandle {
 	func readUInt8() -> UInt8? {
-		let newData = self.readData(ofLength: 1)
-		guard newData.count == 1 else {
-			return nil
+		if #available(macOS 10.15.4, *) {
+			guard let newData = try? self.read(upToCount: 1),
+				  newData.count == 1 else {
+				return nil
+			}
+			return newData[0]
+		} else {
+			let newData = self.readData(ofLength: 1)
+			guard newData.count == 1 else {
+				return nil
+			}
+			return newData[0]
 		}
-		return newData[0]
 	}
 	
 	func readInt8() -> Int8? {
@@ -25,7 +33,15 @@ extension FileHandle {
 	}
 
 	func readUInt16() -> UInt16? {
-		let newData = self.readData(ofLength: 2)
+		let newData: Data
+		if #available(macOS 10.15.4, *) {
+			guard let nData = try? self.read(upToCount: 2) else {
+				return nil
+			}
+			newData = nData
+		} else {
+			newData = self.readData(ofLength: 2)
+		}
 		guard newData.count == 2 else {
 			return nil
 		}
@@ -42,7 +58,15 @@ extension FileHandle {
 	}
 
 	func readUInt32() -> UInt32? {
-		let newData = self.readData(ofLength: 4)
+		let newData: Data
+		if #available(macOS 10.15.4, *) {
+			guard let nData = try? self.read(upToCount: 4) else {
+				return nil
+			}
+			newData = nData
+		} else {
+			newData = self.readData(ofLength: 4)
+		}
 		guard newData.count == 4 else {
 			return nil
 		}
@@ -61,7 +85,15 @@ extension FileHandle {
 	}
 
 	func readUInt64() -> UInt64? {
-		let newData = self.readData(ofLength: 8)
+		let newData: Data
+		if #available(macOS 10.15.4, *) {
+			guard let nData = try? self.read(upToCount: 8) else {
+				return nil
+			}
+			newData = nData
+		} else {
+			newData = self.readData(ofLength: 8)
+		}
 		guard newData.count == 8 else {
 			return nil
 		}
@@ -108,7 +140,15 @@ extension FileHandle {
 			shift += 7;
 		} while (u7 & 0x80) != 0
 
-		let data = readData(ofLength: len)
+		let data: Data
+		if #available(macOS 10.15.4, *) {
+			guard let dat = try? read(upToCount: len) else {
+				return nil
+			}
+			data = dat
+		} else {
+			data = readData(ofLength: len)
+		}
 		return String(data: data, encoding: .utf8)
 	}
 }

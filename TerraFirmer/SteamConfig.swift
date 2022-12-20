@@ -15,7 +15,7 @@ class SteamConfig {
 		var value: String
 		
 		func find(path: String) -> String? {
-			guard let ofs = path.index(of: "/") else {
+			guard let ofs = path.firstIndex(of: "/") else {
 				return children[path]?.value
 			}
 			let ofs1 = path.index(after: ofs)
@@ -32,7 +32,7 @@ class SteamConfig {
 		urlPath.appendPathComponent("config")
 		urlPath.appendPathComponent("config.vdf")
 		guard try urlPath.checkResourceIsReachable() else {
-			throw NSError(domain: NSCocoaErrorDomain, code: NSFileNoSuchFileError, userInfo: [NSURLErrorKey: urlPath])
+			throw CocoaError(.fileNoSuchFile, userInfo: [NSURLErrorKey: urlPath])
 		}
 		try parse(fileAt: urlPath)
 	}
@@ -48,7 +48,7 @@ class SteamConfig {
 		let wholeString = try String(contentsOf: fileAt)
 		var lines = wholeString.components(separatedBy: CharacterSet.newlines)
 		guard let aRoot = Element(lines: &lines) else {
-			throw NSError(domain: NSCocoaErrorDomain, code: NSFileReadCorruptFileError)
+			throw CocoaError(.fileReadCorruptFile)
 		}
 		root = aRoot
 	}
